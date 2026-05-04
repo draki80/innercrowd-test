@@ -1,0 +1,12 @@
+node_modules
+dist
+dist-ssr
+*.log
+.DS_Store
+.vscode/*
+!.vscode/settings.json
+.idea
+*.local
+coverage
+*.tsbuildinfo
+.playwright-mcp/
