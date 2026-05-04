@@ -51,7 +51,6 @@ if (import.meta.env.DEV && !props.ariaLabel && !props.ariaLabelledby) {
 }
 
 const rootEl = ref<HTMLElement | null>(null);
-const inputEl = ref<HTMLInputElement | null>(null);
 
 const open = ref(false);
 const composing = ref(false);
@@ -152,7 +151,6 @@ function selectItem(item: T): void {
   query.value = props.getLabel(item);
   emit('select', item);
   doClose();
-  inputEl.value?.focus();
 }
 
 function onInput(event: Event): void {
@@ -247,7 +245,6 @@ function onKeyDown(event: KeyboardEvent): void {
 <template>
   <div ref="rootEl" class="searchable-select" :class="{ 'is-open': open, 'is-disabled': disabled }">
     <input
-      ref="inputEl"
       type="text"
       role="combobox"
       class="searchable-select__input"

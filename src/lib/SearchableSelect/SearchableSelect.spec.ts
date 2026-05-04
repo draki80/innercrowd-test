@@ -20,7 +20,7 @@ function defer<T>() {
 }
 
 function mountSync(overrides: Record<string, unknown> = {}) {
-  return mount(SearchableSelect, {
+  return mount(SearchableSelect as unknown as new () => unknown, {
     attachTo: document.body,
     props: {
       modelValue: null,
@@ -53,8 +53,10 @@ describe('SearchableSelect — combobox a11y', () => {
     expect(input.attributes('aria-expanded')).toBe('true');
     const options = wrapper.findAll('[role="option"]');
     expect(options).toHaveLength(3);
-    expect(input.attributes('aria-activedescendant')).toBe(options[0].attributes('id'));
-    expect(options[0].attributes('aria-selected')).toBe('true');
+    const first = options[0];
+    if (!first) throw new Error('expected first option');
+    expect(input.attributes('aria-activedescendant')).toBe(first.attributes('id'));
+    expect(first.attributes('aria-selected')).toBe('true');
   });
 
   it('filters as the user types (sync mode)', async () => {
@@ -81,6 +83,7 @@ describe('SearchableSelect — combobox a11y', () => {
     const input = wrapper.get('[role="combobox"]');
     await input.trigger('keydown', { key: 'ArrowDown' });
     const option = wrapper.findAll('[role="option"]')[2];
+    if (!option) throw new Error('expected third option');
     await option.trigger('mousedown');
     expect(wrapper.emitted('update:modelValue')?.at(-1)).toEqual([fruits[2]]);
     expect(input.attributes('aria-expanded')).toBe('false');
@@ -137,7 +140,7 @@ describe('SearchableSelect — async loader', () => {
     loader: (q: string, s: AbortSignal) => Promise<Item[]>,
     overrides: Record<string, unknown> = {},
   ) {
-    return mount(SearchableSelect, {
+    return mount(SearchableSelect as unknown as new () => unknown, {
       attachTo: document.body,
       props: {
         modelValue: null,
@@ -164,7 +167,7 @@ describe('SearchableSelect — async loader', () => {
     await vi.advanceTimersByTimeAsync(250);
     await flushPromises();
     expect(loader).toHaveBeenCalledTimes(1);
-    expect(loader.mock.calls[0][0]).toBe('apple');
+    expect(loader.mock.calls[0]?.[0]).toBe('apple');
   });
 
   it('drops out-of-order responses — slow earlier call must not overwrite fast later call', async () => {
